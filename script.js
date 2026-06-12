@@ -638,3 +638,22 @@ form.addEventListener("submit", e => { e.preventDefault(); execute(input.value);
 save();
 updateHud();
 bootSequence();
+function boostRainByProgress(){
+  const extra = [];
+
+  const saved = JSON.parse(localStorage.getItem("orion0x43b_arg_v2") || "{}");
+  const keys = saved.keys || [];
+
+  if(keys.includes("TEETH")) extra.push("TEETH","OCEAN","SMILES");
+  if(keys.includes("GLASS")) extra.push("GLASS","BOUNDARY","CUTS");
+  if(keys.includes("OBSERVER")) extra.push("OBSERVER","WITNESS","CONTAMINATES");
+  if(keys.includes("BLACKSIGNAL")) extra.push("BLACKSIGNAL","INHERITED","REALITY");
+  if(keys.includes("MOUTH")) extra.push("MOUTH","STARS","MAP");
+  if(keys.includes("GATE")) extra.push("GATE","NOTICES","DAMAGE");
+  if(keys.includes("ORIGIN")) extra.push("ORIGIN","FAULT","FIRST WORLD");
+  if(keys.includes("REPAIR")) extra.push("REPAIR","CONSUME","ORION");
+
+  window.orionProgressGlyphs = extra;
+}
+setInterval(boostRainByProgress, 2000);
+boostRainByProgress();
