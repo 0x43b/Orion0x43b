@@ -148,8 +148,6 @@ signal
 fragment
 fragment [coordinate]
 answer [phrase]
-confirm repair
-accept fault
 archive
 keys
 rank
@@ -218,8 +216,22 @@ ARCHIVE RESISTANCE DETECTED.
 Fragments beyond this threshold require discovered keys, hidden locations, or direct answers.`;
 },
 
-signal:signal: () => {
+signal: () => {
   randomEvent();
+
+  if(state.fragments.length >= 16 && state.fragments.length < 32){
+    const code = makeFragmentCode();
+    state.pendingFragmentCode = code;
+    save();
+    return `SIGNAL STABILIZED.
+FRAGMENT COORDINATE LEAK:
+
+${code}
+
+Use:
+fragment ${code}`;
+  }
+
   return pick(transmissions);
 },
 
@@ -333,20 +345,20 @@ Looking through reveals the next layer.
 Looking too long reveals yourself.
 
 New location implied:
-/node/observer`;
+/node/node/observer`;
 },
 
 observer: () => {
-  if(!has("OBSERVER")) return "OBSERVER cannot be forced. It must be discovered at /node/observer.";
+  if(!has("OBSERVER")) return "OBSERVER cannot be forced. It must be discovered at /node/node/observer.";
   return `OBSERVER CONFIRMED.
 The observer contaminates the observed.
 
 New location implied:
-/node/blacksignal`;
+/node/node/blacksignal`;
 },
 
 blacksignal: () => {
-  if(!has("BLACKSIGNAL")) return "BLACKSIGNAL cannot be forced. It must be discovered at /node/blacksignal.";
+  if(!has("BLACKSIGNAL")) return "BLACKSIGNAL cannot be forced. It must be discovered at /node/node/blacksignal.";
   redAlert();
   return `BLACK SIGNAL RECEIVED.
 
@@ -358,11 +370,11 @@ REALITY
 But translation is always a wound.
 
 New location implied:
-/node/vault`;
+/node/node/vault`;
 },
 
 mouth: () => {
-  if(!has("MOUTH")) return "MOUTH cannot be forced. It must be discovered at /node/vault.";
+  if(!has("MOUTH")) return "MOUTH cannot be forced. It must be discovered at /node/node/vault.";
   unlockFragmentSpecific(48);
   return `THE MOUTH IS FULL OF STARS.
 
@@ -370,13 +382,13 @@ It speaks in maps.
 It maps in wounds.
 
 New location implied:
-/node/gate`;
+/node/node/gate`;
 },
 
 gate: () => {
   if(!has("MOUTH")) return "THE GATE DOES NOT HEAR YOU.";
   if(state.fragments.length < 16) return "THE GATE REQUIRES 16 FRAGMENTS.";
-  if(!has("GATE")) return "GATE cannot be forced. It must be discovered at /node/gate.";
+  if(!has("GATE")) return "GATE cannot be forced. It must be discovered at /node/node/gate.";
   tear();
   return `THE GATE NOTICES YOU.
 
@@ -384,11 +396,11 @@ It does not open.
 It recognizes damage.
 
 New location implied:
-/node/origin`;
+/node/node/origin`;
 },
 
 origin: () => {
-  if(!has("ORIGIN")) return "ORIGIN cannot be forced. It must be discovered at /node/origin.";
+  if(!has("ORIGIN")) return "ORIGIN cannot be forced. It must be discovered at /node/node/origin.";
   return `ORIGIN REPORT:
 The first world did not end.
 It continued incorrectly.
@@ -653,11 +665,11 @@ function hint(){
   }
 
   if(state.fragments.length < 49){
-    if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains. Visit /node/observer and wait for recognition.";
-    if(!has("BLACKSIGNAL")) return "HINT: inherited transmissions are not carried by radio. Visit /node/blacksignal and remain with the signal.";
-    if(!has("MOUTH")) return "HINT: fragment 48 tells you what comes next. Visit /node/vault.";
-    if(!has("GATE")) return "HINT: the gate wants 16 fragments and a mouth. Then visit /node/gate.";
-    if(!has("ORIGIN")) return "HINT: every damaged system has a first fault. Visit /node/origin.";
+    if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains. Visit /node/node/observer and wait for recognition.";
+    if(!has("BLACKSIGNAL")) return "HINT: inherited transmissions are not carried by radio. Visit /node/node/blacksignal and remain with the signal.";
+    if(!has("MOUTH")) return "HINT: fragment 48 tells you what comes next. Visit /node/node/vault.";
+    if(!has("GATE")) return "HINT: the gate wants 16 fragments and a mouth. Then visit /node/node/gate.";
+    if(!has("ORIGIN")) return "HINT: every damaged system has a first fault. Visit /node/node/origin.";
     return "HINT: use fragment observer, fragment blacksignal, fragment mouth, fragment gate, or fragment origin.";
   }
 
