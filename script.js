@@ -146,8 +146,6 @@ status
 scan
 signal
 fragment
-fragment [coordinate]
-answer [phrase]
 archive
 keys
 rank
@@ -184,58 +182,24 @@ REALITY IS THE DAMAGED SYSTEM.`;
 
 scan: () => {
   randomEvent();
-
-  if(state.fragments.length < 16){
-    const found = Math.random() < 0.46 ? unlockFragment() : "NO NEW FRAGMENT RECOVERED.";
-    let clue = "";
-    if(state.fragments.length >= 3 && !state.keys.includes("TEETH")) clue = "\nCLUE: the ocean smiles with TEETH.";
-    if(state.fragments.length >= 8 && state.keys.includes("TEETH") && !state.keys.includes("GLASS")) clue = "\nCLUE: what cuts the boundary?";
-    return `SCAN COMPLETE.
+  const found = Math.random() < 0.46 ? unlockFragment() : "NO NEW FRAGMENT RECOVERED.";
+  let clue = "";
+  if(state.fragments.length >= 3 && !state.keys.includes("TEETH")) clue = "\nCLUE: the ocean smiles with TEETH.";
+  if(state.fragments.length >= 8 && state.keys.includes("TEETH") && !state.keys.includes("GLASS")) clue = "\nCLUE: what cuts the boundary?";
+  if(state.fragments.length >= 12 && !state.flags.sourceHint) clue += "\nCLUE: the page source remembers what the interface denies.";
+  return `SCAN COMPLETE.
 SECTOR: ${sector()}
 ANOMALY MASS: ${rand(1,999)}.${rand(10,99)}
 SIGNAL INTEGRITY: ${rand(16,99)}%
 ${found}${clue}`;
-  }
-
-  if(state.fragments.length < 32){
-    const code = makeFragmentCode();
-    state.pendingFragmentCode = code;
-    save();
-    return `SCAN COMPLETE.
-ANOMALY COORDINATE RECOVERED:
-
-${code}
-
-Use:
-fragment ${code}`;
-  }
-
-  return `SCAN COMPLETE.
-ARCHIVE RESISTANCE DETECTED.
-
-Fragments beyond this threshold require discovered keys, hidden locations, or direct answers.`;
 },
 
 signal: () => {
   randomEvent();
-
-  if(state.fragments.length >= 16 && state.fragments.length < 32){
-    const code = makeFragmentCode();
-    state.pendingFragmentCode = code;
-    save();
-    return `SIGNAL STABILIZED.
-FRAGMENT COORDINATE LEAK:
-
-${code}
-
-Use:
-fragment ${code}`;
-  }
-
   return pick(transmissions);
 },
 
-fragment: () => fragmentCommand(),
+fragment: () => unlockFragment(),
 
 archive: () => archiveText(),
 
@@ -263,30 +227,11 @@ LIFEFORMS: ${pick(["unverified","hostile","recursive","absent","listening","alre
 ORION PRESENCE: ${rand(1,16)}/16
 WARNING: ${pick(transmissions)}`,
 
-decode: () => {
-  if(state.fragments.length >= 16 && state.fragments.length < 32){
-    const code = makeFragmentCode();
-    state.pendingFragmentCode = code;
-    save();
-    return `DECODE STREAM:
+decode: () => `DECODE STREAM:
 ${glyphs(224)}
 
 PARTIAL TRANSLATION:
-"${pick(["DO NOT WAKE THE REPAIR FUNCTION","THE GATE NOTICES","REALITY IS NOT LOCAL","THE MOUTH IS FULL OF STARS","SIXTEEN IS A SCAR","THE ANSWER WAS NEVER HIDDEN. YOU WERE."])}"
-
-COORDINATE RECOVERED:
-${code}
-
-Use:
-fragment ${code}`;
-  }
-
-  return `DECODE STREAM:
-${glyphs(224)}
-
-PARTIAL TRANSLATION:
-"${pick(["DO NOT WAKE THE REPAIR FUNCTION","THE GATE NOTICES","REALITY IS NOT LOCAL","THE MOUTH IS FULL OF STARS","SIXTEEN IS A SCAR","THE ANSWER WAS NEVER HIDDEN. YOU WERE."])}"`;
-},
+"${pick(["DO NOT WAKE THE REPAIR FUNCTION","THE GATE NOTICES","REALITY IS NOT LOCAL","THE MOUTH IS FULL OF STARS","SIXTEEN IS A SCAR","THE ANSWER WAS NEVER HIDDEN. YOU WERE."])}"`,
 
 hint: () => hint(),
 
@@ -345,20 +290,20 @@ Looking through reveals the next layer.
 Looking too long reveals yourself.
 
 New location implied:
-/node/node/observer`;
+/node/observer`;
 },
 
 observer: () => {
-  if(!has("OBSERVER")) return "OBSERVER cannot be forced. It must be discovered at /node/node/observer.";
+  if(!has("OBSERVER")) return "OBSERVER cannot be forced. It must be discovered at /node/observer.";
   return `OBSERVER CONFIRMED.
 The observer contaminates the observed.
 
 New location implied:
-/node/node/blacksignal`;
+/node/blacksignal`;
 },
 
 blacksignal: () => {
-  if(!has("BLACKSIGNAL")) return "BLACKSIGNAL cannot be forced. It must be discovered at /node/node/blacksignal.";
+  if(!has("BLACKSIGNAL")) return "BLACKSIGNAL cannot be forced. It must be discovered at /node/blacksignal.";
   redAlert();
   return `BLACK SIGNAL RECEIVED.
 
@@ -370,11 +315,11 @@ REALITY
 But translation is always a wound.
 
 New location implied:
-/node/node/vault`;
+/node/vault`;
 },
 
 mouth: () => {
-  if(!has("MOUTH")) return "MOUTH cannot be forced. It must be discovered at /node/node/vault.";
+  if(!has("MOUTH")) return "MOUTH cannot be forced. It must be discovered at /node/vault.";
   unlockFragmentSpecific(48);
   return `THE MOUTH IS FULL OF STARS.
 
@@ -382,13 +327,13 @@ It speaks in maps.
 It maps in wounds.
 
 New location implied:
-/node/node/gate`;
+/node/gate`;
 },
 
 gate: () => {
   if(!has("MOUTH")) return "THE GATE DOES NOT HEAR YOU.";
   if(state.fragments.length < 16) return "THE GATE REQUIRES 16 FRAGMENTS.";
-  if(!has("GATE")) return "GATE cannot be forced. It must be discovered at /node/node/gate.";
+  if(!has("GATE")) return "GATE cannot be forced. It must be discovered at /node/gate.";
   tear();
   return `THE GATE NOTICES YOU.
 
@@ -396,11 +341,11 @@ It does not open.
 It recognizes damage.
 
 New location implied:
-/node/node/origin`;
+/node/origin`;
 },
 
 origin: () => {
-  if(!has("ORIGIN")) return "ORIGIN cannot be forced. It must be discovered at /node/node/origin.";
+  if(!has("ORIGIN")) return "ORIGIN cannot be forced. It must be discovered at /node/origin.";
   return `ORIGIN REPORT:
 The first world did not end.
 It continued incorrectly.
@@ -414,74 +359,18 @@ repair`;
 
 repair: () => {
   if(!has("ORIGIN")) return "REPAIR FUNCTION UNAVAILABLE.";
-  if(state.fragments.length < 64) return "REPAIR REQUIRES ALL 64 FRAGMENTS.";
-
+  if(state.fragments.length < 49) return "REPAIR REQUIRES 49 FRAGMENTS.";
   grantKey("REPAIR");
   redAlert();
-
-  state.flags.repairAwake = true;
-  save();
-
   return `REPAIR FUNCTION AWAKENED.
 
-WARNING:
-FINAL ARCHIVE COMPLETE.
+YOU WERE NEVER REPAIRING REALITY.
+YOU WERE REPAIRING ORION.
 
-TARGET IDENTIFIED:
-ORION
-
-THE REPAIR TARGET WAS NEVER REALITY.
-
-CONFIRMATION REQUIRED.
-
-Type:
-confirm repair`;
-},
-
-"confirm repair": () => {
-  if(!state.flags.repairAwake) return "NO ACTIVE REPAIR FUNCTION.";
-
-  state.flags.repairConfirmed = true;
-  save();
-  redAlert();
-
-  return `CONFIRMATION ACCEPTED.
-
-REALITY INTEGRITY FAILURE.
-REALITY INTEGRITY FAILURE.
-REALITY INTEGRITY FAILURE.
-
-YOU WERE NEVER RECOVERING THE SYSTEM.
-
-YOU WERE RECOVERING ORION.
+REALITY WAS THE DAMAGED SYSTEM.
 
 FINAL DIRECTIVE:
-accept fault`;
-},
-
-"accept fault": () => {
-  if(!state.flags.repairConfirmed) return "FAULT CANNOT BE ACCEPTED YET.";
-
-  state.flags.argComplete = true;
-  save();
-  redAlert();
-
-  return `FAULT ACCEPTED.
-
-NODE 0x43B STATUS:
-RECOVERED
-
-OBSERVER STATUS:
-RECOGNIZED
-
-ORION STATUS:
-ACTIVE
-
-REALITY STATUS:
-DAMAGED
-
-FINAL LOCATION UNSEALED:
-/node/echo`;
+Recover all 64 fragments.`;
 },
 
 relay: () => commands.donate(),
@@ -568,8 +457,6 @@ function execute(raw){
 
   let result;
   if(cmd.startsWith("key ")) result = keyCheck(cmd.slice(4).trim().toUpperCase());
-  else if(cmd.startsWith("fragment ")) result = fragmentCodeCheck(cmd.slice(9).trim().toUpperCase());
-  else if(cmd.startsWith("answer ")) result = answerCheck(cmd.slice(7).trim().toLowerCase());
   else result = commands[cmd];
 
   if(!result) result = `UNKNOWN COMMAND: ${cmd}
@@ -653,150 +540,17 @@ function archiveText(){
 }
 
 function hint(){
-  if(state.fragments.length < 16){
-    if(!has("TEETH")) return "HINT: the ocean smiles with a word. Try ritual form: key [word]. Or inspect the source.";
-    if(!has("GLASS")) return "HINT: the boundary is not a wall. It cuts.";
-    if(!state.flags.glass) return "HINT: commands can also be keys. Try the thing you unlocked.";
-    return "HINT: recover the first 16 fragments. The archive is still permissive.";
-  }
-
-  if(state.fragments.length < 32){
-    return "HINT: the archive resists direct recovery. Use scan, signal, or decode to recover coordinates. Then use fragment [coordinate].";
-  }
-
-  if(state.fragments.length < 49){
-    if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains. Visit /node/node/observer and wait for recognition.";
-    if(!has("BLACKSIGNAL")) return "HINT: inherited transmissions are not carried by radio. Visit /node/node/blacksignal and remain with the signal.";
-    if(!has("MOUTH")) return "HINT: fragment 48 tells you what comes next. Visit /node/node/vault.";
-    if(!has("GATE")) return "HINT: the gate wants 16 fragments and a mouth. Then visit /node/node/gate.";
-    if(!has("ORIGIN")) return "HINT: every damaged system has a first fault. Visit /node/node/origin.";
-    return "HINT: use fragment observer, fragment blacksignal, fragment mouth, fragment gate, or fragment origin.";
-  }
-
-  if(!has("REPAIR")) return "HINT: the final archive wants answers. Try answer reality, answer orion, answer repair, or answer damaged system.";
+  if(!has("TEETH")) return "HINT: the ocean smiles with a word. Try ritual form: key [word]. Or inspect the source.";
+  if(!has("GLASS")) return "HINT: the boundary is not a wall. It cuts.";
+  if(!state.flags.glass) return "HINT: commands can also be keys. Try the thing you unlocked.";
+  if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains. Visit /node/observer and wait for recognition.";
+  if(!has("BLACKSIGNAL")) return "HINT: inherited transmissions are not carried by radio. Visit /node/blacksignal and remain with the signal.";
+  if(!has("MOUTH")) return "HINT: fragment 48 tells you what comes next. Visit /node/vault.";
+  if(!has("GATE")) return "HINT: the gate wants 16 fragments and a mouth. Then visit /node/gate.";
+  if(!has("ORIGIN")) return "HINT: every damaged system has a first fault. Visit /node/origin.";
+  if(!has("REPAIR")) return "HINT: repair requires 49 fragments.";
   return "HINT: 64 fragments. Then the system will ask the wrong question.";
 }
-
-
-function fragmentCommand(){
-  if(state.fragments.length < 16){
-    return unlockFragment();
-  }
-
-  if(state.fragments.length < 32){
-    return `ARCHIVE RESISTING DIRECT RECOVERY.
-
-Use one of:
-scan
-signal
-decode
-
-Then submit:
-fragment [coordinate]`;
-  }
-
-  if(state.fragments.length < 49){
-    return `FRAGMENT LOCKED BY DISCOVERY STATE.
-
-Valid recovered-channel forms:
-fragment observer
-fragment blacksignal
-fragment mouth
-fragment gate
-fragment origin
-
-Each requires its matching key.`;
-  }
-
-  return `FINAL ARCHIVE LOCKED.
-
-The remaining fragments require answers.
-
-Try:
-answer [phrase]`;
-}
-
-function makeFragmentCode(){
-  const a = pick(["GLASS","ORION","NULL","RED","BONE","CICADA","VANTA","ASH"]);
-  const b = pick(["43B","XVI","16","NODE","FAULT","EYE"]);
-  const c = rand(100,999);
-  return `${a}-${b}-${c}`;
-}
-
-function fragmentCodeCheck(code){
-  if(state.fragments.length < 16){
-    return "COORDINATES UNNEEDED. The archive is still open. Use fragment.";
-  }
-
-  if(state.fragments.length >= 16 && state.fragments.length < 32){
-    if(!state.pendingFragmentCode){
-      return "NO ACTIVE COORDINATE. Run scan, signal, or decode.";
-    }
-
-    if(code !== state.pendingFragmentCode){
-      return "COORDINATE REJECTED.";
-    }
-
-    state.pendingFragmentCode = "";
-    return unlockFragment();
-  }
-
-  const channel = code.toLowerCase();
-
-  const channelMap = {
-    observer: "OBSERVER",
-    blacksignal: "BLACKSIGNAL",
-    mouth: "MOUTH",
-    gate: "GATE",
-    origin: "ORIGIN"
-  };
-
-  if(state.fragments.length >= 32 && state.fragments.length < 49){
-    const required = channelMap[channel];
-
-    if(!required){
-      return "UNKNOWN RECOVERY CHANNEL.";
-    }
-
-    if(!has(required)){
-      return `CHANNEL LOCKED. REQUIRED KEY: ${required}`;
-    }
-
-    return unlockFragment();
-  }
-
-  return "COORDINATE SYSTEM EXPIRED. The final archive requires answers.";
-}
-
-function answerCheck(answer){
-  if(state.fragments.length < 49){
-    return "THE ARCHIVE IS NOT READY FOR ANSWERS.";
-  }
-
-  const answers = {
-    "reality": "REALITY",
-    "damaged system": "DAMAGED SYSTEM",
-    "the damaged system": "DAMAGED SYSTEM",
-    "orion": "ORION",
-    "repair": "REPAIR",
-    "the repair function": "REPAIR",
-    "you were repairing orion": "ORION",
-    "reality was the damaged system": "REALITY"
-  };
-
-  if(!answers[answer]){
-    return "ANSWER REJECTED.";
-  }
-
-  if(answer.includes("orion") || answer.includes("repair")){
-    if(!has("ORIGIN")){
-      return "ANSWER REJECTED. ORIGIN HAS NOT BEEN WITNESSED.";
-    }
-  }
-
-  return unlockFragment();
-}
-
 
 function randomEvent(){
   const r = Math.random();
