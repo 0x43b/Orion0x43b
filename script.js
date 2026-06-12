@@ -366,7 +366,24 @@ Do not show wallets until the hunt earns trust.
 Make support feel like maintaining the relay, not buying access.`
 };
 
+function syncDiscoveredKeys(){
+  const map = {
+    observer_discovered: "OBSERVER",
+    blacksignal_discovered: "BLACKSIGNAL",
+    mouth_discovered: "MOUTH",
+    gate_discovered: "GATE",
+    origin_discovered: "ORIGIN"
+  };
+
+  for(const flag in map){
+    if(localStorage.getItem(flag)==="true" && !state.keys.includes(map[flag])){
+      state.keys.push(map[flag]);
+    }
+  }
+}
+
 function save(){
+  syncDiscoveredKeys();
   localStorage.setItem("orion0x43b_arg_v2", JSON.stringify(state));
   updateHud();
 }
