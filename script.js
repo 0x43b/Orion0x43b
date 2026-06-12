@@ -290,20 +290,20 @@ Looking through reveals the next layer.
 Looking too long reveals yourself.
 
 New location implied:
-/observer`;
+/node/observer`;
 },
 
 observer: () => {
-  if(!has("OBSERVER")) return "OBSERVER cannot be forced. It must be discovered at /observer.";
+  if(!has("OBSERVER")) return "OBSERVER cannot be forced. It must be discovered at /node/observer.";
   return `OBSERVER CONFIRMED.
 The observer contaminates the observed.
 
 New location implied:
-/blacksignal`;
+/node/blacksignal`;
 },
 
 blacksignal: () => {
-  if(!has("BLACKSIGNAL")) return "BLACKSIGNAL cannot be forced. It must be discovered at /blacksignal.";
+  if(!has("BLACKSIGNAL")) return "BLACKSIGNAL cannot be forced. It must be discovered at /node/blacksignal.";
   redAlert();
   return `BLACK SIGNAL RECEIVED.
 
@@ -315,11 +315,11 @@ REALITY
 But translation is always a wound.
 
 New location implied:
-/vault`;
+/node/vault`;
 },
 
 mouth: () => {
-  if(!has("MOUTH")) return "MOUTH cannot be forced. It must be discovered at /vault.";
+  if(!has("MOUTH")) return "MOUTH cannot be forced. It must be discovered at /node/vault.";
   unlockFragmentSpecific(48);
   return `THE MOUTH IS FULL OF STARS.
 
@@ -327,13 +327,13 @@ It speaks in maps.
 It maps in wounds.
 
 New location implied:
-/gate`;
+/node/gate`;
 },
 
 gate: () => {
   if(!has("MOUTH")) return "THE GATE DOES NOT HEAR YOU.";
   if(state.fragments.length < 16) return "THE GATE REQUIRES 16 FRAGMENTS.";
-  if(!has("GATE")) return "GATE cannot be forced. It must be discovered at /gate.";
+  if(!has("GATE")) return "GATE cannot be forced. It must be discovered at /node/gate.";
   tear();
   return `THE GATE NOTICES YOU.
 
@@ -341,11 +341,11 @@ It does not open.
 It recognizes damage.
 
 New location implied:
-/origin`;
+/node/origin`;
 },
 
 origin: () => {
-  if(!has("ORIGIN")) return "ORIGIN cannot be forced. It must be discovered at /origin.";
+  if(!has("ORIGIN")) return "ORIGIN cannot be forced. It must be discovered at /node/origin.";
   return `ORIGIN REPORT:
 The first world did not end.
 It continued incorrectly.
@@ -543,11 +543,11 @@ function hint(){
   if(!has("TEETH")) return "HINT: the ocean smiles with a word. Try ritual form: key [word]. Or inspect the source.";
   if(!has("GLASS")) return "HINT: the boundary is not a wall. It cuts.";
   if(!state.flags.glass) return "HINT: commands can also be keys. Try the thing you unlocked.";
-  if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains. Visit /observer and wait for recognition.";
-  if(!has("BLACKSIGNAL")) return "HINT: inherited transmissions are not carried by radio. Visit /blacksignal and remain with the signal.";
-  if(!has("MOUTH")) return "HINT: fragment 48 tells you what comes next. Visit /vault.";
-  if(!has("GATE")) return "HINT: the gate wants 16 fragments and a mouth. Then visit /gate.";
-  if(!has("ORIGIN")) return "HINT: every damaged system has a first fault. Visit /origin.";
+  if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains. Visit /node/observer and wait for recognition.";
+  if(!has("BLACKSIGNAL")) return "HINT: inherited transmissions are not carried by radio. Visit /node/blacksignal and remain with the signal.";
+  if(!has("MOUTH")) return "HINT: fragment 48 tells you what comes next. Visit /node/vault.";
+  if(!has("GATE")) return "HINT: the gate wants 16 fragments and a mouth. Then visit /node/gate.";
+  if(!has("ORIGIN")) return "HINT: every damaged system has a first fault. Visit /node/origin.";
   if(!has("REPAIR")) return "HINT: repair requires 49 fragments.";
   return "HINT: 64 fragments. Then the system will ask the wrong question.";
 }
@@ -638,22 +638,3 @@ form.addEventListener("submit", e => { e.preventDefault(); execute(input.value);
 save();
 updateHud();
 bootSequence();
-function boostRainByProgress(){
-  const extra = [];
-
-  const saved = JSON.parse(localStorage.getItem("orion0x43b_arg_v2") || "{}");
-  const keys = saved.keys || [];
-
-  if(keys.includes("TEETH")) extra.push("TEETH","OCEAN","SMILES");
-  if(keys.includes("GLASS")) extra.push("GLASS","BOUNDARY","CUTS");
-  if(keys.includes("OBSERVER")) extra.push("OBSERVER","WITNESS","CONTAMINATES");
-  if(keys.includes("BLACKSIGNAL")) extra.push("BLACKSIGNAL","INHERITED","REALITY");
-  if(keys.includes("MOUTH")) extra.push("MOUTH","STARS","MAP");
-  if(keys.includes("GATE")) extra.push("GATE","NOTICES","DAMAGE");
-  if(keys.includes("ORIGIN")) extra.push("ORIGIN","FAULT","FIRST WORLD");
-  if(keys.includes("REPAIR")) extra.push("REPAIR","CONSUME","ORION");
-
-  window.orionProgressGlyphs = extra;
-}
-setInterval(boostRainByProgress, 2000);
-boostRainByProgress();
