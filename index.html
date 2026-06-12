@@ -1,201 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#050000"/>
-  <meta name="description" content="ORION // NODE 0x43B"/>
-  <title>ORION // NODE 0x43B</title>
-  <link rel="stylesheet" href="style.css"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#050000"/>
+<title>ORION // SIGNAL GATE</title>
+<style>
+:root{
+  --red:#ff2020;
+  --hot:#ff6969;
+  --dim:#650000;
+  --text:#ffb6b6;
+  --muted:#9c4545;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  color:var(--text);
+  font-family:Consolas,"Courier New",monospace;
+}
+#rain{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(255,0,0,.055),
+    rgba(255,0,0,.055) 1px,
+    transparent 2px,
+    transparent 5px
+  );
+  box-shadow:inset 0 0 190px #000,inset 0 0 80px rgba(255,0,0,.16);
+  pointer-events:none;
+  z-index:4;
+}
+.gate{
+  position:relative;
+  z-index:2;
+  min-height:100%;
+  display:grid;
+  place-items:center;
+  padding:22px;
+}
+.panel{
+  width:min(760px,94vw);
+  border:1px solid var(--dim);
+  background:rgba(0,0,0,.72);
+  padding:26px;
+  text-align:center;
+  box-shadow:0 0 40px rgba(255,0,0,.25),inset 0 0 38px rgba(255,0,0,.08);
+  backdrop-filter:blur(1px);
+}
+.eye{
+  width:min(310px,74vw);
+  margin:0 auto 18px;
+  filter:drop-shadow(0 0 22px #f00);
+  animation:pulse 4s infinite ease-in-out;
+}
+@keyframes pulse{
+  0%,100%{opacity:.72;transform:scale(.98)}
+  50%{opacity:1;transform:scale(1.05)}
+}
+h1{
+  margin:0;
+  color:var(--red);
+  letter-spacing:6px;
+  text-shadow:0 0 16px #f00,0 0 34px #900;
+  font-size:clamp(28px,7vw,56px);
+}
+.sub{
+  margin:12px 0 20px;
+  color:var(--muted);
+  letter-spacing:2px;
+  font-size:13px;
+}
+.status{
+  border:1px solid #430000;
+  background:#080000;
+  padding:12px;
+  margin:14px 0;
+  color:#ff7676;
+  text-align:left;
+}
+.cmd{
+  display:flex;
+  gap:8px;
+  margin-top:18px;
+  border:1px solid #5b0000;
+  background:#050000;
+  padding:10px;
+}
+.cmd label{
+  color:var(--red);
+  font-weight:900;
+  font-size:22px;
+}
+.cmd input{
+  flex:1;
+  min-width:0;
+  background:#000;
+  border:1px solid #540000;
+  color:white;
+  padding:12px;
+  font-family:inherit;
+  outline:none;
+}
+.cmd input:focus{
+  border-color:var(--red);
+  box-shadow:0 0 12px rgba(255,0,0,.45);
+}
+.cmd button{
+  background:#320000;
+  border:1px solid #930000;
+  color:white;
+  padding:12px;
+  font-family:inherit;
+}
+.msg{
+  min-height:28px;
+  margin-top:14px;
+  color:#ff4d4d;
+}
+.small{
+  margin-top:14px;
+  color:#6f2b2b;
+  font-size:12px;
+}
+.glitch{
+  animation:g .22s steps(2) infinite;
+}
+@keyframes g{
+  50%{opacity:.7;transform:translateX(1px);text-shadow:2px 0 #0ff,-2px 0 #f0f,0 0 14px #f00}
+}
+.flash{
+  animation:f .12s steps(2) 10;
+}
+@keyframes f{
+  50%{filter:brightness(2) contrast(1.4)}
+}
+</style>
 </head>
 <body>
-  <div id="noise"></div>
-  <div id="scanlines"></div>
-  <div id="vignette"></div>
-  <div id="flash"></div>
-  <div id="cursorGhost"></div>
+<canvas id="rain"></canvas>
 
-  <main class="shell">
-    <section id="boot" class="boot">
-      <div class="boot-panel">
-        <div class="boot-title glitch" data-text="ORION // NODE 0x43B">ORION // NODE 0x43B</div>
-        <div class="boot-sub">orion0x43b.net // unauthorized recovery terminal</div>
-        <pre id="bootLog"></pre>
-      </div>
-    </section>
+<main class="gate">
+  <section class="panel">
+    <svg class="eye" viewBox="0 0 300 170">
+      <path d="M20 85 Q150 12 280 85 Q150 158 20 85Z" fill="none" stroke="rgba(255,35,35,.95)" stroke-width="3"/>
+      <ellipse cx="150" cy="85" rx="104" ry="42" fill="none" stroke="rgba(255,0,0,.38)" stroke-width="2"/>
+      <circle cx="150" cy="85" r="33" fill="none" stroke="rgba(255,80,80,.95)" stroke-width="4"/>
+      <circle cx="150" cy="85" r="9" fill="rgba(255,0,0,.98)"/>
+      <text x="150" y="164" text-anchor="middle" fill="rgba(255,60,60,.74)" font-size="9" font-family="monospace">REALITY IS THE DAMAGED SYSTEM</text>
+    </svg>
 
-    <section id="app" class="app hidden">
-      <header class="topbar">
-        <div>
-          <div class="brand glitch-soft" data-text="ORION">ORION</div>
-          <div class="sub">NODE 0x43B // REALITY DAMAGE INVESTIGATION</div>
-        </div>
-        <div class="hud-right">
-          <div id="clock">00:00:00</div>
-          <div id="phase">PHASE: SURFACE</div>
-          <div id="domain">orion0x43b.net</div>
-        </div>
-      </header>
+    <h1 class="glitch">SIGNAL GATE</h1>
+    <div class="sub">ORION // NODE 0x43B // ACCESS NOT GIVEN</div>
 
-      <section class="eye-wrap">
-        <svg class="eye" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" aria-label="ORION Eye">
-          <defs>
-            <filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <filter id="hardglow"><feGaussianBlur stdDeviation="8" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          </defs>
-          <path d="M22 90 Q160 12 298 90 Q160 168 22 90Z" fill="none" stroke="rgba(255,35,35,.95)" stroke-width="3" filter="url(#glow)"/>
-          <path d="M42 90 Q160 38 278 90 Q160 142 42 90Z" fill="none" stroke="rgba(255,0,0,.32)" stroke-width="2"/>
-          <ellipse cx="160" cy="90" rx="108" ry="44" fill="none" stroke="rgba(255,0,0,.38)" stroke-width="2"/>
-          <circle class="iris" cx="160" cy="90" r="35" fill="none" stroke="rgba(255,80,80,.95)" stroke-width="4" filter="url(#hardglow)"/>
-          <circle class="pupil" cx="160" cy="90" r="10" fill="rgba(255,0,0,.98)"/>
-          <circle cx="160" cy="90" r="2" fill="#fff"/>
-          <line x1="160" y1="28" x2="160" y2="152" stroke="rgba(255,0,0,.22)"/>
-          <line x1="52" y1="90" x2="268" y2="90" stroke="rgba(255,0,0,.22)"/>
-          <text x="160" y="174" text-anchor="middle" fill="rgba(255,60,60,.74)" font-size="9" font-family="monospace">REALITY IS THE DAMAGED SYSTEM</text>
-        </svg>
-      </section>
+    <div class="status">
+      <div>UPLINK: PARTIAL</div>
+      <div>TERMINAL: HIDDEN</div>
+      <div>INSTRUCTION: WATCH THE RAIN</div>
+      <div>RITUAL: TYPE THE SIGNAL</div>
+    </div>
 
-      <section class="status-grid">
-        <div><span>OBSERVER</span><b id="observerId">----</b></div>
-        <div><span>RANK</span><b id="rank">UNASSIGNED</b></div>
-        <div><span>FRAGMENTS</span><b id="frags">0/64</b></div>
-        <div><span>KEYS</span><b id="keys">0/8</b></div>
-        <div><span>REALITY INTEGRITY</span><b id="integrity">--%</b></div>
-        <div><span>THREAT</span><b id="threat">UNKNOWN</b></div>
-      </section>
+    <form class="cmd" id="gateForm">
+      <label for="gateInput">&gt;</label>
+      <input id="gateInput" autocomplete="off" spellcheck="false" autofocus placeholder="signal"/>
+      <button>OPEN</button>
+    </form>
 
-      <section class="mission">
-        <b>OBJECTIVE:</b> recover fragments, decode keys, open the gate, locate the origin fault. The source is part of the hunt.
-      </section>
+    <div class="msg" id="msg">The rain repeats what the interface denies.</div>
+    <div class="small">No menu. No link. The node answers only recognition.</div>
+  </section>
+</main>
 
-      <section id="terminal" class="terminal" aria-live="polite"></section>
-
-      <form id="cmdForm" class="cmdline">
-        <label for="cmd">&gt;</label>
-        <input id="cmd" autocomplete="off" spellcheck="false" autofocus placeholder="type help"/>
-        <button type="submit">EXEC</button>
-      </form>
-
-      <section class="footer">
-        No menus. No map. Commands are artifacts. The system rewards trespass.
-      </section>
-    </section>
-  </main>
-
-  <!-- FIRST STATIC CLUE:
-       Not every key lives in the terminal.
-       Some gates prefer the page source.
-       Ritual form: key [word]
-       The first word has TEETH.
-  -->
-
-  <script src="script.js"></script>
-  <canvas id="orionRain"></canvas>
+<!-- SOURCE CLUE:
+     The terminal is not gone.
+     It waits at /node.
+     The rain says NODE.
+     Other accepted signals: 0x43B, ORION, ACCESS NODE
+-->
 
 <script>
-(() => {
+const canvas=document.getElementById("rain");
+const ctx=canvas.getContext("2d");
+const msg=document.getElementById("msg");
+const form=document.getElementById("gateForm");
+const input=document.getElementById("gateInput");
 
-const canvas = document.getElementById("orionRain");
-const ctx = canvas.getContext("2d");
+let w,h,cols,drops,size;
+
+const glyphs=[
+  "0","1","16","43B","0x","//","█","▒","░",
+  "OR","IO","ON","NUL","ERR","SYS","RED",
+  "TE","ETH","GL","ASS","OBS","SIG","GAT","ATE",
+  "NO","DE","N","O","D","E"
+];
+
+const rare=[
+  "NODE",
+  "/NODE",
+  "0x43B",
+  "ORION",
+  "ACCESS NODE",
+  "THE NODE WAITS",
+  "TYPE NODE",
+  "NOT A WEBSITE",
+  "THE RAIN IS THE KEY"
+];
 
 function resize(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  w=canvas.width=innerWidth;
+  h=canvas.height=innerHeight;
+  size=16;
+  cols=Math.floor(w/size);
+  drops=Array(cols).fill(0).map(()=>Math.random()*h/size);
 }
-
 resize();
-window.addEventListener("resize", resize);
+addEventListener("resize",resize);
 
-const glyphs = [
-"0","1","16","43B","0x",
-"█","▒","░",
-"OR","IO","ON",
-"OBS","SIG","ARC",
-"TE","ETH",
-"GL","ASS",
-"MOU","UTH",
-"GAT","ATE",
-"ORI","GIN",
-"REP","AIR"
-];
-
-const rare = [
-"TEETH",
-"GLASS",
-"OBSERVER",
-"BLACKSIGNAL",
-"MOUTH",
-"GATE",
-"ORIGIN",
-"REPAIR",
-"REALITY",
-"DAMAGED",
-"THE GATE NOTICES",
-"YOU WERE REPAIRING ORION",
-"REALITY IS THE DAMAGED SYSTEM"
-];
-
-const size = 16;
-let cols;
-let drops;
-
-function init(){
-  cols = Math.floor(canvas.width / size);
-  drops = Array(cols).fill(0).map(() =>
-    Math.floor(Math.random() * canvas.height / size)
-  );
-}
-
-init();
-
-function pick(arr){
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
 
 function draw(){
-
-  ctx.fillStyle = "rgba(0,0,0,0.08)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  ctx.font = size + "px monospace";
+  ctx.fillStyle="rgba(0,0,0,.085)";
+  ctx.fillRect(0,0,w,h);
+  ctx.font=size+"px Consolas, monospace";
 
   for(let i=0;i<drops.length;i++){
+    const x=i*size;
+    const y=drops[i]*size;
 
-    let text;
+    const r=Math.random();
+    const isRare=r<0.013;
+    const isUltra=r<0.002;
 
-    if(Math.random() < 0.005){
-      text = pick(rare);
+    let text=isRare ? pick(rare) : pick(glyphs);
 
-      ctx.fillStyle = "rgba(255,255,255,.95)";
-      ctx.shadowColor = "#ff0000";
-      ctx.shadowBlur = 15;
+    if(isUltra) text=pick(["NODE","NODE","0x43B","ACCESS NODE"]);
 
+    if(isUltra){
+      ctx.fillStyle="rgba(255,255,255,.98)";
+      ctx.shadowColor="#fff";
+      ctx.shadowBlur=22;
+    }else if(isRare){
+      ctx.fillStyle="rgba(255,90,90,.96)";
+      ctx.shadowColor="#f00";
+      ctx.shadowBlur=14;
     }else{
-
-      text = pick(glyphs);
-
-      ctx.fillStyle = "rgba(255,0,0,.35)";
-      ctx.shadowBlur = 0;
+      ctx.fillStyle="rgba(255,0,0,"+(0.22+Math.random()*0.34)+")";
+      ctx.shadowBlur=0;
     }
-
-    const x = i * size;
-    const y = drops[i] * size;
 
     ctx.fillText(text,x,y);
 
-    if(y > canvas.height && Math.random() > 0.97){
-      drops[i] = 0;
-    }
-
-    drops[i] += 0.8;
+    if(y>h && Math.random()>0.975) drops[i]=0;
+    drops[i]+=isRare ? .34 : .76;
   }
-
   requestAnimationFrame(draw);
 }
-
 draw();
 
-})();
+function openNode(){
+  localStorage.setItem("orion_gateway_open","true");
+  document.body.classList.add("flash");
+  msg.textContent="SIGNAL ACCEPTED. NODE UNSEALED.";
+  setTimeout(()=>location.href="/node/",900);
+}
+
+form.addEventListener("submit",e=>{
+  e.preventDefault();
+  const v=input.value.trim().toLowerCase().replace(/\s+/g," ");
+  if(["node","/node","0x43b","orion","access node","open node"].includes(v)){
+    openNode();
+  }else{
+    msg.textContent="SIGNAL REJECTED. WATCH THE RAIN.";
+    input.value="";
+  }
+});
+
+document.addEventListener("keydown",e=>{
+  const k=e.key.toLowerCase();
+  window._orionSeq=(window._orionSeq||"")+k;
+  window._orionSeq=window._orionSeq.slice(-12);
+  if(window._orionSeq.includes("node") || window._orionSeq.includes("0x43b")){
+    openNode();
+  }
+});
 </script>
 </body>
 </html>
