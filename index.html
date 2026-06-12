@@ -3,269 +3,111 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<meta name="theme-color" content="#050000"/>
-<title>ORION // SIGNAL GATE</title>
+<meta name="theme-color" content="#000000"/>
+<title>ORION // 0x43B</title>
 <style>
-:root{
-  --red:#ff2020;
-  --hot:#ff6969;
-  --dim:#650000;
-  --text:#ffb6b6;
-  --muted:#9c4545;
-}
+:root{--red:#ff2020;--hot:#ff6969;--dim:#650000;--muted:#9c4545;--text:#ffb6b6}
 *{box-sizing:border-box}
-html,body{
-  margin:0;
-  height:100%;
-  overflow:hidden;
-  background:#000;
-  color:var(--text);
-  font-family:Consolas,"Courier New",monospace;
-}
-#rain{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:0;
-}
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:repeating-linear-gradient(
-    0deg,
-    rgba(255,0,0,.055),
-    rgba(255,0,0,.055) 1px,
-    transparent 2px,
-    transparent 5px
-  );
-  box-shadow:inset 0 0 190px #000,inset 0 0 80px rgba(255,0,0,.16);
-  pointer-events:none;
-  z-index:4;
-}
-.gate{
-  position:relative;
-  z-index:2;
-  min-height:100%;
-  display:grid;
-  place-items:center;
-  padding:22px;
-}
-.panel{
-  width:min(760px,94vw);
-  border:1px solid var(--dim);
-  background:rgba(0,0,0,.72);
-  padding:26px;
-  text-align:center;
-  box-shadow:0 0 40px rgba(255,0,0,.25),inset 0 0 38px rgba(255,0,0,.08);
-  backdrop-filter:blur(1px);
-}
-.eye{
-  width:min(310px,74vw);
-  margin:0 auto 18px;
-  filter:drop-shadow(0 0 22px #f00);
-  animation:pulse 4s infinite ease-in-out;
-}
-@keyframes pulse{
-  0%,100%{opacity:.72;transform:scale(.98)}
-  50%{opacity:1;transform:scale(1.05)}
-}
-h1{
-  margin:0;
-  color:var(--red);
-  letter-spacing:6px;
-  text-shadow:0 0 16px #f00,0 0 34px #900;
-  font-size:clamp(28px,7vw,56px);
-}
-.sub{
-  margin:12px 0 20px;
-  color:var(--muted);
-  letter-spacing:2px;
-  font-size:13px;
-}
-.status{
-  border:1px solid #430000;
-  background:#080000;
-  padding:12px;
-  margin:14px 0;
-  color:#ff7676;
-  text-align:left;
-}
-.cmd{
-  display:flex;
-  gap:8px;
-  margin-top:18px;
-  border:1px solid #5b0000;
-  background:#050000;
-  padding:10px;
-}
-.cmd label{
-  color:var(--red);
-  font-weight:900;
-  font-size:22px;
-}
-.cmd input{
-  flex:1;
-  min-width:0;
-  background:#000;
-  border:1px solid #540000;
-  color:white;
-  padding:12px;
-  font-family:inherit;
-  outline:none;
-}
-.cmd input:focus{
-  border-color:var(--red);
-  box-shadow:0 0 12px rgba(255,0,0,.45);
-}
-.cmd button{
-  background:#320000;
-  border:1px solid #930000;
-  color:white;
-  padding:12px;
-  font-family:inherit;
-}
-.msg{
-  min-height:28px;
-  margin-top:14px;
-  color:#ff4d4d;
-}
-.small{
-  margin-top:14px;
-  color:#6f2b2b;
-  font-size:12px;
-}
-.glitch{
-  animation:g .22s steps(2) infinite;
-}
-@keyframes g{
-  50%{opacity:.7;transform:translateX(1px);text-shadow:2px 0 #0ff,-2px 0 #f0f,0 0 14px #f00}
-}
-.flash{
-  animation:f .12s steps(2) 10;
-}
-@keyframes f{
-  50%{filter:brightness(2) contrast(1.4)}
-}
+html,body{margin:0;height:100%;overflow:hidden;background:#000;color:var(--text);font-family:Consolas,"Courier New",monospace}
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+body:before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,rgba(255,0,0,.052),rgba(255,0,0,.052) 1px,transparent 2px,transparent 5px);box-shadow:inset 0 0 210px #000,inset 0 0 90px rgba(255,0,0,.18);pointer-events:none;z-index:4}
+body:after{content:"";position:fixed;inset:0;background:radial-gradient(circle,rgba(255,0,0,.55) 1px,transparent 1.2px);background-size:4px 4px;opacity:.055;animation:noise .13s steps(2) infinite;pointer-events:none;z-index:5}
+@keyframes noise{50%{transform:translate(2px,-1px)}}
+.center{position:relative;z-index:2;height:100%;display:grid;place-items:center;padding:22px}
+.eye{width:min(370px,78vw);filter:drop-shadow(0 0 24px #f00);opacity:.82;animation:pulse 4s infinite ease-in-out}
+@keyframes pulse{0%,100%{transform:scale(.98);opacity:.65}50%{transform:scale(1.05);opacity:1}}
+.panel{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);width:min(760px,92vw);border:1px solid rgba(120,0,0,.45);background:rgba(0,0,0,.35);padding:14px;text-align:center;box-shadow:0 0 30px rgba(255,0,0,.12);opacity:.72}
+.title{letter-spacing:7px;color:var(--red);text-shadow:0 0 18px #f00;font-weight:900;font-size:clamp(24px,6vw,48px);animation:glitch .22s steps(2) infinite}
+.sub{font-size:12px;color:var(--muted);letter-spacing:2px;margin-top:8px}
+.trace{margin-top:10px;color:#5f2424;font-size:12px;min-height:18px}
+@keyframes glitch{50%{transform:translateX(1px);text-shadow:2px 0 #0ff,-2px 0 #f0f,0 0 15px #f00}}
+.flash{animation:flash .12s steps(2) 12}@keyframes flash{50%{filter:brightness(2) contrast(1.5)}}
+.unseen{position:absolute;left:-9999px;opacity:0}
 </style>
 </head>
 <body>
 <canvas id="rain"></canvas>
 
-<main class="gate">
-  <section class="panel">
-    <svg class="eye" viewBox="0 0 300 170">
-      <path d="M20 85 Q150 12 280 85 Q150 158 20 85Z" fill="none" stroke="rgba(255,35,35,.95)" stroke-width="3"/>
-      <ellipse cx="150" cy="85" rx="104" ry="42" fill="none" stroke="rgba(255,0,0,.38)" stroke-width="2"/>
-      <circle cx="150" cy="85" r="33" fill="none" stroke="rgba(255,80,80,.95)" stroke-width="4"/>
-      <circle cx="150" cy="85" r="9" fill="rgba(255,0,0,.98)"/>
-      <text x="150" y="164" text-anchor="middle" fill="rgba(255,60,60,.74)" font-size="9" font-family="monospace">REALITY IS THE DAMAGED SYSTEM</text>
-    </svg>
+<div class="center">
+  <svg class="eye" viewBox="0 0 320 180">
+    <path d="M22 90 Q160 12 298 90 Q160 168 22 90Z" fill="none" stroke="rgba(255,35,35,.95)" stroke-width="3"/>
+    <path d="M42 90 Q160 38 278 90 Q160 142 42 90Z" fill="none" stroke="rgba(255,0,0,.32)" stroke-width="2"/>
+    <ellipse cx="160" cy="90" rx="108" ry="44" fill="none" stroke="rgba(255,0,0,.38)" stroke-width="2"/>
+    <circle cx="160" cy="90" r="35" fill="none" stroke="rgba(255,80,80,.95)" stroke-width="4"/>
+    <circle cx="160" cy="90" r="10" fill="rgba(255,0,0,.98)"/>
+    <text x="160" y="174" text-anchor="middle" fill="rgba(255,60,60,.74)" font-size="9" font-family="monospace">REALITY IS THE DAMAGED SYSTEM</text>
+  </svg>
 
-    <h1 class="glitch">SIGNAL GATE</h1>
-    <div class="sub">ORION // NODE 0x43B // ACCESS NOT GIVEN</div>
-
-    <div class="status">
-      <div>UPLINK: PARTIAL</div>
-      <div>TERMINAL: HIDDEN</div>
-      <div>INSTRUCTION: WATCH THE RAIN</div>
-      <div>RITUAL: TYPE THE SIGNAL</div>
-    </div>
-
-    <form class="cmd" id="gateForm">
-      <label for="gateInput">&gt;</label>
-      <input id="gateInput" autocomplete="off" spellcheck="false" autofocus placeholder="signal"/>
-      <button>OPEN</button>
-    </form>
-
-    <div class="msg" id="msg">The rain repeats what the interface denies.</div>
-    <div class="small">No menu. No link. The node answers only recognition.</div>
-  </section>
-</main>
+  <div class="panel">
+    <div class="title">ORION</div>
+    <div class="sub">SIGNAL GATE // INPUT NOT DISPLAYED</div>
+    <div class="trace" id="trace">watch the rain</div>
+  </div>
+</div>
 
 <!-- SOURCE CLUE:
-     The terminal is not gone.
-     It waits at /node.
-     The rain says NODE.
-     Other accepted signals: 0x43B, ORION, ACCESS NODE
+     The interface is missing because the interface lied.
+     The rain repeats the route.
+     Type: NODE
+     Alternate: 0x43B
 -->
 
 <script>
 const canvas=document.getElementById("rain");
 const ctx=canvas.getContext("2d");
-const msg=document.getElementById("msg");
-const form=document.getElementById("gateForm");
-const input=document.getElementById("gateInput");
+const trace=document.getElementById("trace");
+let w,h,size,cols,drops;
+let seq="";
 
-let w,h,cols,drops,size;
-
-const glyphs=[
-  "0","1","16","43B","0x","//","█","▒","░",
-  "OR","IO","ON","NUL","ERR","SYS","RED",
-  "TE","ETH","GL","ASS","OBS","SIG","GAT","ATE",
-  "NO","DE","N","O","D","E"
-];
-
-const rare=[
-  "NODE",
-  "/NODE",
-  "0x43B",
-  "ORION",
-  "ACCESS NODE",
-  "THE NODE WAITS",
-  "TYPE NODE",
-  "NOT A WEBSITE",
-  "THE RAIN IS THE KEY"
-];
+const glyphs=["0","1","16","43B","0x","//","█","▒","░","OR","IO","ON","NUL","ERR","SYS","RED","TE","ETH","GL","ASS","OBS","SIG","GAT","ATE","N","O","D","E"];
+const rare=["NODE","/NODE","0x43B","ORION","THE NODE WAITS","TYPE NODE","NOT A WEBSITE","THE RAIN IS THE KEY"];
+const verticalSignals=[["N","O","D","E"],["0","x","4","3","B"]];
 
 function resize(){
-  w=canvas.width=innerWidth;
-  h=canvas.height=innerHeight;
-  size=16;
-  cols=Math.floor(w/size);
+  w=canvas.width=innerWidth; h=canvas.height=innerHeight; size=16; cols=Math.floor(w/size);
   drops=Array(cols).fill(0).map(()=>Math.random()*h/size);
 }
-resize();
-addEventListener("resize",resize);
+resize(); addEventListener("resize",resize);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
 
-function pick(a){return a[Math.floor(Math.random()*a.length)]}
+let vertical=null;
+function maybeVerticalSignal(){
+  if(!vertical && Math.random()<0.008){
+    vertical={col:Math.floor(Math.random()*cols), row:0, sig:pick(verticalSignals), life:0};
+  }
+}
+function drawVertical(){
+  if(!vertical)return;
+  const x=vertical.col*size;
+  ctx.fillStyle="rgba(255,255,255,.96)";
+  ctx.shadowColor="#fff"; ctx.shadowBlur=22;
+  for(let j=0;j<vertical.sig.length;j++) ctx.fillText(vertical.sig[j],x,(vertical.row+j)*size);
+  vertical.row+=0.55; vertical.life++;
+  if(vertical.row*size>h || vertical.life>260) vertical=null;
+}
 
 function draw(){
   ctx.fillStyle="rgba(0,0,0,.085)";
   ctx.fillRect(0,0,w,h);
   ctx.font=size+"px Consolas, monospace";
+  maybeVerticalSignal();
 
   for(let i=0;i<drops.length;i++){
-    const x=i*size;
-    const y=drops[i]*size;
-
+    const x=i*size, y=drops[i]*size;
     const r=Math.random();
-    const isRare=r<0.013;
-    const isUltra=r<0.002;
+    const isRare=r<0.009;
+    const isUltra=r<0.0015;
+    let text=isUltra?pick(["NODE","NODE","0x43B"]):(isRare?pick(rare):pick(glyphs));
 
-    let text=isRare ? pick(rare) : pick(glyphs);
-
-    if(isUltra) text=pick(["NODE","NODE","0x43B","ACCESS NODE"]);
-
-    if(isUltra){
-      ctx.fillStyle="rgba(255,255,255,.98)";
-      ctx.shadowColor="#fff";
-      ctx.shadowBlur=22;
-    }else if(isRare){
-      ctx.fillStyle="rgba(255,90,90,.96)";
-      ctx.shadowColor="#f00";
-      ctx.shadowBlur=14;
-    }else{
-      ctx.fillStyle="rgba(255,0,0,"+(0.22+Math.random()*0.34)+")";
-      ctx.shadowBlur=0;
-    }
+    if(isUltra){ctx.fillStyle="rgba(255,255,255,.98)";ctx.shadowColor="#fff";ctx.shadowBlur=22;}
+    else if(isRare){ctx.fillStyle="rgba(255,80,80,.96)";ctx.shadowColor="#f00";ctx.shadowBlur=14;}
+    else{ctx.fillStyle="rgba(255,0,0,"+(0.18+Math.random()*0.35)+")";ctx.shadowBlur=0;}
 
     ctx.fillText(text,x,y);
-
-    if(y>h && Math.random()>0.975) drops[i]=0;
-    drops[i]+=isRare ? .34 : .76;
+    if(y>h && Math.random()>0.975)drops[i]=0;
+    drops[i]+=isRare||isUltra?.35:.76;
   }
+  drawVertical();
   requestAnimationFrame(draw);
 }
 draw();
@@ -273,29 +115,23 @@ draw();
 function openNode(){
   localStorage.setItem("orion_gateway_open","true");
   document.body.classList.add("flash");
-  msg.textContent="SIGNAL ACCEPTED. NODE UNSEALED.";
-  setTimeout(()=>location.href="/node/",900);
+  trace.textContent="signal accepted // node unsealed";
+  setTimeout(()=>location.href="/node/",850);
 }
 
-form.addEventListener("submit",e=>{
-  e.preventDefault();
-  const v=input.value.trim().toLowerCase().replace(/\s+/g," ");
-  if(["node","/node","0x43b","orion","access node","open node"].includes(v)){
+document.addEventListener("keydown",e=>{
+  const k=e.key.length===1?e.key.toLowerCase():"";
+  if(!k)return;
+  seq=(seq+k).slice(-24);
+  trace.textContent="input captured: " + "•".repeat(Math.min(seq.length,12));
+
+  if(seq.includes("node") || seq.includes("0x43b") || seq.includes("orion")){
     openNode();
-  }else{
-    msg.textContent="SIGNAL REJECTED. WATCH THE RAIN.";
-    input.value="";
   }
 });
 
-document.addEventListener("keydown",e=>{
-  const k=e.key.toLowerCase();
-  window._orionSeq=(window._orionSeq||"")+k;
-  window._orionSeq=window._orionSeq.slice(-12);
-  if(window._orionSeq.includes("node") || window._orionSeq.includes("0x43b")){
-    openNode();
-  }
-});
+setTimeout(()=>trace.textContent="the route falls vertically",12000);
+setTimeout(()=>trace.textContent="N O D E",26000);
 </script>
 </body>
 </html>
