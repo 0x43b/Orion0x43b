@@ -4,6 +4,7 @@
   - live clock
   - procedural glyph text
   - animated ORION key-rain background
+  - progression-reactive glyph rain based on unlocked keys
 */
 
 document.querySelectorAll("[data-time]").forEach(e=>{
@@ -32,6 +33,57 @@ function tear(){
 setInterval(()=>{
   if(Math.random()<.08)tear();
 },3000);
+
+/*
+  Reads player progress from localStorage.
+  This works on all pages that load /assets/orion.js.
+*/
+function getOrionProgressGlyphs(){
+  let saved = {};
+
+  try{
+    saved = JSON.parse(localStorage.getItem("orion0x43b_arg_v2") || "{}");
+  }catch(e){
+    saved = {};
+  }
+
+  const keys = saved.keys || [];
+  const extra = [];
+
+  if(keys.includes("TEETH")){
+    extra.push("TEETH","OCEAN","SMILES","THE OCEAN SMILES");
+  }
+
+  if(keys.includes("GLASS")){
+    extra.push("GLASS","BOUNDARY","CUTS","BOUNDARY GLASS","CUTS INWARD");
+  }
+
+  if(keys.includes("OBSERVER")){
+    extra.push("OBSERVER","WITNESS","CONTAMINATES","THE OBSERVER CONTAMINATES");
+  }
+
+  if(keys.includes("BLACKSIGNAL")){
+    extra.push("BLACKSIGNAL","INHERITED","REALITY","THE SIGNAL IS INHERITED");
+  }
+
+  if(keys.includes("MOUTH")){
+    extra.push("MOUTH","STARS","MAP","THE MOUTH IS FULL OF STARS");
+  }
+
+  if(keys.includes("GATE")){
+    extra.push("GATE","NOTICES","DAMAGE","THE GATE NOTICES YOU");
+  }
+
+  if(keys.includes("ORIGIN")){
+    extra.push("ORIGIN","FAULT","FIRST WORLD","THE FIRST WORLD DID NOT END");
+  }
+
+  if(keys.includes("REPAIR")){
+    extra.push("REPAIR","CONSUME","ORION","YOU WERE REPAIRING ORION");
+  }
+
+  return extra;
+}
 
 /* ORION GLYPH RAIN */
 (function initOrionRain(){
@@ -65,6 +117,18 @@ setInterval(()=>{
     "REALITY IS THE DAMAGED SYSTEM"
   ];
 
+  const ultraHints=[
+    "KEY",
+    "OPEN",
+    "SOURCE",
+    "LOOK DEEPER",
+    "NOT A WEBSITE",
+    "YOU WERE REPAIRING ORION",
+    "REALITY WAS THE DAMAGED SYSTEM",
+    "THE SOURCE REMEMBERS",
+    "THE INTERFACE LIES"
+  ];
+
   let width,height,columns,drops,fontSize;
 
   function resize(){
@@ -88,30 +152,45 @@ setInterval(()=>{
 
     ctx.font=fontSize+"px Consolas, monospace";
 
+    const progressGlyphs = getOrionProgressGlyphs();
+
     for(let i=0;i<drops.length;i++){
       const x=i*fontSize;
       const y=drops[i]*fontSize;
 
-      const rare=Math.random()<0.006;
-      const ultra=Math.random()<0.0015;
+      const rare=Math.random()<0.0075;
+      const ultra=Math.random()<0.0018;
 
-      let text=rare ? pick(rareHints) : pick(normalGlyphs);
+      let text;
 
       if(ultra){
-        text=pick([
-          "KEY",
-          "OPEN",
-          "SOURCE",
-          "LOOK DEEPER",
-          "NOT A WEBSITE",
-          "YOU WERE REPAIRING ORION"
-        ]);
+        if(progressGlyphs.length && Math.random()<0.55){
+          text=pick(progressGlyphs);
+        }else{
+          text=pick(ultraHints);
+        }
+      }else if(rare){
+        if(progressGlyphs.length && Math.random()<0.50){
+          text=pick(progressGlyphs);
+        }else{
+          text=pick(rareHints);
+        }
+      }else{
+        if(progressGlyphs.length && Math.random()<0.025){
+          text=pick(progressGlyphs);
+        }else{
+          text=pick(normalGlyphs);
+        }
       }
 
-      if(rare || ultra){
-        ctx.fillStyle=ultra ? "rgba(255,255,255,0.95)" : "rgba(255,80,80,0.95)";
-        ctx.shadowColor=ultra ? "#ffffff" : "#ff0000";
-        ctx.shadowBlur=ultra ? 18 : 12;
+      if(ultra){
+        ctx.fillStyle="rgba(255,255,255,0.96)";
+        ctx.shadowColor="#ffffff";
+        ctx.shadowBlur=20;
+      }else if(rare){
+        ctx.fillStyle="rgba(255,90,90,0.96)";
+        ctx.shadowColor="#ff0000";
+        ctx.shadowBlur=14;
       }else{
         const alpha=0.22+Math.random()*0.35;
         ctx.fillStyle=`rgba(255,0,0,${alpha})`;
@@ -124,7 +203,7 @@ setInterval(()=>{
         drops[i]=0;
       }
 
-      drops[i]+=rare ? 0.35 : 0.75;
+      drops[i]+=rare || ultra ? 0.35 : 0.75;
     }
 
     requestAnimationFrame(draw);
