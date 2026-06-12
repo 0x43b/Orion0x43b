@@ -1,50 +1,35 @@
-# ORION // NODE 0x43B — Full ARG Static Site
+# ORION // NODE 0x43B — ARG V2 Replacement Build
 
 Domain target: `orion0x43b.net`
 
-## What this is
-A GitHub Pages-ready static ARG / terminal scavenger hunt.
+## Replace these files in your GitHub repo
+- `index.html`
+- `style.css`
+- `script.js`
 
-Features:
-- Animated boot sequence
-- CRT scanlines, red glitches, static noise
-- Atlas-eye style SVG logo
-- Terminal command system
-- 64 lore fragments
-- 8-key progression lattice
-- Hidden commands
-- Browser-local progress saving
-- Ranks, phases, reality integrity, threat model
-- No backend required
-- No API keys
-- No database
+You can keep or replace `README.md`.
 
-## Upload to GitHub Pages
-1. Create a repo.
-2. Upload `index.html`, `style.css`, and `script.js` to the repo root.
-3. Go to Settings → Pages.
-4. Deploy from branch → main → root.
-5. Add custom domain: `orion0x43b.net`.
+## Upload steps
+1. Open your GitHub repo.
+2. Click each existing file.
+3. Use the pencil/edit button OR upload these replacement files.
+4. Commit changes to `main`.
+5. GitHub Pages will update automatically.
 
-## First commands
+## Commands to test
 - help
 - scan
-- fragment
-- archive
 - hint
+- key teeth
+- key glass
+- glass
+- observer
+- blacksignal
+- mouth
+- gate
+- origin
+- repair
 
-## Early puzzle path
-- `key teeth`
-- `key glass`
-- `glass`
-- `observer`
-- `blacksignal`
-- `mouth`
-- `gate`
-- `origin`
-- `repair`
-
-## Monetization later
-Add a hidden `donate` or `relay` command after the lore is stronger.
-Use BTC/XMR addresses only as public receive addresses.
-Never include private keys anywhere in this project.
+## Notes
+This is fully static and stores progress in localStorage.
+No backend, no API keys, no database.

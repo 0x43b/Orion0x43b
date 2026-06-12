@@ -1,3 +1,11 @@
+/*
+  ORION // NODE 0x43B
+  SOURCE CLUE:
+  The source is part of the hunt.
+  key teeth begins the lattice.
+  If you are reading this, you are already trespassing.
+*/
+
 const $ = id => document.getElementById(id);
 
 const boot = $("boot");
@@ -102,7 +110,8 @@ const transmissions = [
 "The observer has been added to the wound.",
 "The atlas eye is not watching you. It is debugging you.",
 "Sixteen wounds form a circle when nobody survives the count.",
-"The keys are not keys. They are symptoms with names."
+"The keys are not keys. They are symptoms with names.",
+"Some clues are comments. Some comments are confessions."
 ];
 
 const bootLines = [
@@ -120,7 +129,7 @@ const bootLines = [
 "[READY] type help"
 ];
 
-let state = JSON.parse(localStorage.getItem("orion0x43b_arg") || "{}");
+let state = JSON.parse(localStorage.getItem("orion0x43b_arg_v2") || "{}");
 state.id ||= makeId();
 state.fragments ||= [];
 state.keys ||= [];
@@ -151,6 +160,7 @@ HIDDEN COMMANDS EXIST.
 Some require keys.
 Some require fragments.
 Some require the right word in the wrong place.
+Some live in the source.
 
 Known ritual form:
 key [word]`,
@@ -174,6 +184,7 @@ scan: () => {
   let clue = "";
   if(state.fragments.length >= 3 && !state.keys.includes("TEETH")) clue = "\nCLUE: the ocean smiles with TEETH.";
   if(state.fragments.length >= 8 && state.keys.includes("TEETH") && !state.keys.includes("GLASS")) clue = "\nCLUE: what cuts the boundary?";
+  if(state.fragments.length >= 12 && !state.flags.sourceHint) clue += "\nCLUE: the page source remembers what the interface denies.";
   return `SCAN COMPLETE.
 SECTOR: ${sector()}
 ANOMALY MASS: ${rand(1,999)}.${rand(10,99)}
@@ -222,7 +233,7 @@ clear: () => {
 },
 
 reset: () => {
-  localStorage.removeItem("orion0x43b_arg");
+  localStorage.removeItem("orion0x43b_arg_v2");
   location.reload();
   return "RESETTING.";
 },
@@ -246,6 +257,16 @@ cicada: () => {
 It was a training scar.
 
 FRAGMENT 61 RECOVERED.`;
+},
+
+source: () => {
+  state.flags.sourceHint = true;
+  save();
+  return `SOURCE LAYER ACKNOWLEDGED.
+The interface lies by omission.
+
+Ritual remains:
+key [word]`;
 },
 
 glass: () => {
@@ -335,6 +356,8 @@ FINAL DIRECTIVE:
 Recover all 64 fragments.`;
 },
 
+relay: () => commands.donate(),
+
 donate: () => `RESOURCE TRANSFER NODE:
 BTC / XMR support can be added here later.
 
@@ -344,7 +367,7 @@ Make support feel like maintaining the relay, not buying access.`
 };
 
 function save(){
-  localStorage.setItem("orion0x43b_arg", JSON.stringify(state));
+  localStorage.setItem("orion0x43b_arg_v2", JSON.stringify(state));
   updateHud();
 }
 
@@ -467,7 +490,7 @@ function archiveText(){
 }
 
 function hint(){
-  if(!has("TEETH")) return "HINT: the ocean smiles with a word. Try ritual form: key [word].";
+  if(!has("TEETH")) return "HINT: the ocean smiles with a word. Try ritual form: key [word]. Or inspect the source.";
   if(!has("GLASS")) return "HINT: the boundary is not a wall. It cuts.";
   if(!state.flags.glass) return "HINT: commands can also be keys. Try the thing you unlocked.";
   if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains.";
@@ -520,7 +543,7 @@ function bootSequence(){
     if(i < bootLines.length){
       bootLog.textContent += bootLines[i++] + "\n";
       if(Math.random() < .35) bootLog.textContent += glyphs(rand(16,44)) + "\n";
-      setTimeout(tick, rand(90,220));
+      setTimeout(tick, rand(70,180));
     } else {
       setTimeout(()=>{
         boot.classList.add("hidden");
@@ -532,7 +555,7 @@ function bootSequence(){
         line("This is not a website. This is a recovery wound.");
         line("Type help.");
         if(state.fragments.length) line(`Welcome back, ${currentRank()}.`);
-      }, 500);
+      }, 400);
     }
   };
   tick();
@@ -551,6 +574,11 @@ function glyphs(len){
   }
   return out;
 }
+
+document.addEventListener("mousemove", e => {
+  document.documentElement.style.setProperty("--x", e.clientX + "px");
+  document.documentElement.style.setProperty("--y", e.clientY + "px");
+});
 
 setInterval(()=>$("clock").textContent = new Date().toLocaleTimeString(),1000);
 form.addEventListener("submit", e => { e.preventDefault(); execute(input.value); input.value = ""; });
