@@ -238,3 +238,22 @@ body.reality-tear .shell{animation:tear .18s steps(2) 10}
   .brand{font-size:25px}
   .terminal{min-height:480px}
 }
+#orionRain{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  pointer-events:none;
+  opacity:.75;
+}
+
+.wrap,
+.boot,
+.panel,
+.top,
+.hud,
+.terminal{
+  position:relative;
+  z-index:2;
+}
