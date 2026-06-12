@@ -90,5 +90,112 @@
   -->
 
   <script src="script.js"></script>
+  <canvas id="orionRain"></canvas>
+
+<script>
+(() => {
+
+const canvas = document.getElementById("orionRain");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+resize();
+window.addEventListener("resize", resize);
+
+const glyphs = [
+"0","1","16","43B","0x",
+"█","▒","░",
+"OR","IO","ON",
+"OBS","SIG","ARC",
+"TE","ETH",
+"GL","ASS",
+"MOU","UTH",
+"GAT","ATE",
+"ORI","GIN",
+"REP","AIR"
+];
+
+const rare = [
+"TEETH",
+"GLASS",
+"OBSERVER",
+"BLACKSIGNAL",
+"MOUTH",
+"GATE",
+"ORIGIN",
+"REPAIR",
+"REALITY",
+"DAMAGED",
+"THE GATE NOTICES",
+"YOU WERE REPAIRING ORION",
+"REALITY IS THE DAMAGED SYSTEM"
+];
+
+const size = 16;
+let cols;
+let drops;
+
+function init(){
+  cols = Math.floor(canvas.width / size);
+  drops = Array(cols).fill(0).map(() =>
+    Math.floor(Math.random() * canvas.height / size)
+  );
+}
+
+init();
+
+function pick(arr){
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function draw(){
+
+  ctx.fillStyle = "rgba(0,0,0,0.08)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.font = size + "px monospace";
+
+  for(let i=0;i<drops.length;i++){
+
+    let text;
+
+    if(Math.random() < 0.005){
+      text = pick(rare);
+
+      ctx.fillStyle = "rgba(255,255,255,.95)";
+      ctx.shadowColor = "#ff0000";
+      ctx.shadowBlur = 15;
+
+    }else{
+
+      text = pick(glyphs);
+
+      ctx.fillStyle = "rgba(255,0,0,.35)";
+      ctx.shadowBlur = 0;
+    }
+
+    const x = i * size;
+    const y = drops[i] * size;
+
+    ctx.fillText(text,x,y);
+
+    if(y > canvas.height && Math.random() > 0.97){
+      drops[i] = 0;
+    }
+
+    drops[i] += 0.8;
+  }
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+
+})();
+</script>
 </body>
 </html>
