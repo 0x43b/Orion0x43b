@@ -138,7 +138,6 @@ state.integrity ||= rand(54, 91);
 state.threat ||= pick(["DORMANT","CURIOUS","LISTENING","MISALIGNED","HUNGRY"]);
 state.firstSeen ||= new Date().toISOString();
 state.lastSeen = new Date().toLocaleString();
-save();
 
 const commands = {
 help: `VISIBLE COMMANDS:
@@ -165,7 +164,9 @@ Some live in the source.
 Known ritual form:
 key [word]`,
 
-status: () => `ORION // NODE 0x43B
+status: () => {
+  syncDiscoveredKeys();
+  return `ORION // NODE 0x43B
 DOMAIN: orion0x43b.net
 OBSERVER: ${state.id}
 RANK: ${currentRank()}
@@ -176,7 +177,8 @@ THREAT MODEL: ${state.threat}
 LAST CONTACT: ${state.lastSeen}
 
 DIAGNOSIS:
-REALITY IS THE DAMAGED SYSTEM.`,
+REALITY IS THE DAMAGED SYSTEM.`;
+},
 
 scan: () => {
   randomEvent();
@@ -201,11 +203,17 @@ fragment: () => unlockFragment(),
 
 archive: () => archiveText(),
 
-keys: () => `RECOVERED KEYS:
+keys: () => {
+  syncDiscoveredKeys();
+  localStorage.setItem("orion0x43b_arg_v2", JSON.stringify(state));
+  updateHud();
+
+  return `RECOVERED KEYS:
 ${state.keys.length ? state.keys.join("\n") : "NONE"}
 
 KEY LATTICE:
-${keyNames.map(k => state.keys.includes(k) ? "[OPEN] " + k : "[LOCK] █████").join("\n")}`,
+${keyNames.map(k => state.keys.includes(k) ? "[OPEN] " + k : "[LOCK] █████").join("\n")}`;
+},
 
 rank: () => `OBSERVER DESIGNATION:
 ${currentRank()}
@@ -234,6 +242,11 @@ clear: () => {
 
 reset: () => {
   localStorage.removeItem("orion0x43b_arg_v2");
+  localStorage.removeItem("observer_discovered");
+  localStorage.removeItem("blacksignal_discovered");
+  localStorage.removeItem("mouth_discovered");
+  localStorage.removeItem("gate_discovered");
+  localStorage.removeItem("origin_discovered");
   location.reload();
   return "RESETTING.";
 },
@@ -276,21 +289,21 @@ glass: () => {
 Looking through reveals the next layer.
 Looking too long reveals yourself.
 
-New command discovered: observer`;
+New location implied:
+/observer`;
 },
 
 observer: () => {
-  if(!state.flags.glass) return "ACCESS DENIED. The glass has not noticed you.";
-  grantKey("OBSERVER");
+  if(!has("OBSERVER")) return "OBSERVER cannot be forced. It must be discovered at /observer.";
   return `OBSERVER CONFIRMED.
 The observer contaminates the observed.
 
-New command discovered: blacksignal`;
+New location implied:
+/blacksignal`;
 },
 
 blacksignal: () => {
-  if(!has("OBSERVER")) return "NO CARRIER.";
-  grantKey("BLACKSIGNAL");
+  if(!has("BLACKSIGNAL")) return "BLACKSIGNAL cannot be forced. It must be discovered at /blacksignal.";
   redAlert();
   return `BLACK SIGNAL RECEIVED.
 
@@ -301,37 +314,38 @@ REALITY
 
 But translation is always a wound.
 
-New command discovered: mouth`;
+New location implied:
+/vault`;
 },
 
 mouth: () => {
-  if(!has("BLACKSIGNAL")) return "THE MOUTH IS CLOSED.";
-  grantKey("MOUTH");
+  if(!has("MOUTH")) return "MOUTH cannot be forced. It must be discovered at /vault.";
   unlockFragmentSpecific(48);
   return `THE MOUTH IS FULL OF STARS.
 
 It speaks in maps.
 It maps in wounds.
 
-New command discovered: gate`;
+New location implied:
+/gate`;
 },
 
 gate: () => {
   if(!has("MOUTH")) return "THE GATE DOES NOT HEAR YOU.";
   if(state.fragments.length < 16) return "THE GATE REQUIRES 16 FRAGMENTS.";
-  grantKey("GATE");
+  if(!has("GATE")) return "GATE cannot be forced. It must be discovered at /gate.";
   tear();
   return `THE GATE NOTICES YOU.
 
 It does not open.
 It recognizes damage.
 
-New command discovered: origin`;
+New location implied:
+/origin`;
 },
 
 origin: () => {
-  if(!has("GATE")) return "COORDINATE SEALED.";
-  grantKey("ORIGIN");
+  if(!has("ORIGIN")) return "ORIGIN cannot be forced. It must be discovered at /origin.";
   return `ORIGIN REPORT:
 The first world did not end.
 It continued incorrectly.
@@ -339,7 +353,8 @@ It continued incorrectly.
 Every world after was a patch.
 Every observer after was a symptom.
 
-New command discovered: repair`;
+New command discovered:
+repair`;
 },
 
 repair: () => {
@@ -349,8 +364,10 @@ repair: () => {
   redAlert();
   return `REPAIR FUNCTION AWAKENED.
 
-It does not fix damaged systems.
-It consumes them.
+YOU WERE NEVER REPAIRING REALITY.
+YOU WERE REPAIRING ORION.
+
+REALITY WAS THE DAMAGED SYSTEM.
 
 FINAL DIRECTIVE:
 Recover all 64 fragments.`;
@@ -376,8 +393,9 @@ function syncDiscoveredKeys(){
   };
 
   for(const flag in map){
-    if(localStorage.getItem(flag)==="true" && !state.keys.includes(map[flag])){
-      state.keys.push(map[flag]);
+    const key = map[flag];
+    if(localStorage.getItem(flag) === "true" && !state.keys.includes(key)){
+      state.keys.push(key);
     }
   }
 }
@@ -399,6 +417,7 @@ function updateHud(){
 }
 
 function phase(){
+  syncDiscoveredKeys();
   if(has("REPAIR")) return "REPAIR";
   if(has("ORIGIN")) return "ORIGIN";
   if(has("GATE")) return "GATE";
@@ -418,8 +437,7 @@ function currentRank(){
   if(n >= 32) return ranks[5];
   if(n >= 16) return ranks[4];
   if(n >= 8) return ranks[3];
-  if(n >= 3) return ranks[2];
-  if(n >= 1) return ranks[1];
+  if(n >= 1) return ranks[2];
   return ranks[0];
 }
 
@@ -434,6 +452,7 @@ function line(text, cls="system"){
 function execute(raw){
   const cmd = raw.trim().toLowerCase();
   if(!cmd) return;
+  syncDiscoveredKeys();
   line(`> ${raw}`, "user");
 
   let result;
@@ -451,6 +470,12 @@ The system heard you anyway.`;
 }
 
 function keyCheck(k){
+  syncDiscoveredKeys();
+
+  if(has(k)){
+    return `KEY ALREADY RECOGNIZED: ${k}`;
+  }
+
   if(k === "TEETH"){
     grantKey("TEETH");
     return `KEY ACCEPTED: TEETH
@@ -459,6 +484,7 @@ The ocean smiles.
 New key phrase implied:
 GLASS`;
   }
+
   if(k === "GLASS"){
     if(!has("TEETH")) return "KEY REJECTED. The ocean has not smiled.";
     grantKey("GLASS");
@@ -468,18 +494,25 @@ Boundary material recognized.
 New command discovered:
 glass`;
   }
-  if(keyNames.includes(k)) return `KEY ${k} cannot be forced. It must be found.`;
+
+  if(keyNames.includes(k)){
+    return `KEY ${k} cannot be forced. It must be discovered.`;
+  }
+
   return "KEY REJECTED.";
 }
 
 function grantKey(k){
   if(!state.keys.includes(k)){
     state.keys.push(k);
-    save();
+    localStorage.setItem("orion0x43b_arg_v2", JSON.stringify(state));
   }
 }
 
-function has(k){ return state.keys.includes(k); }
+function has(k){
+  syncDiscoveredKeys();
+  return state.keys.includes(k);
+}
 
 function unlockFragment(){
   if(state.fragments.length >= fragments.length) return "ARCHIVE COMPLETE. Completion is another cage.";
@@ -510,11 +543,11 @@ function hint(){
   if(!has("TEETH")) return "HINT: the ocean smiles with a word. Try ritual form: key [word]. Or inspect the source.";
   if(!has("GLASS")) return "HINT: the boundary is not a wall. It cuts.";
   if(!state.flags.glass) return "HINT: commands can also be keys. Try the thing you unlocked.";
-  if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains.";
-  if(!has("BLACKSIGNAL")) return "HINT: inherited transmissions are not carried by radio.";
-  if(!has("MOUTH")) return "HINT: fragment 48 tells you what comes next.";
-  if(!has("GATE")) return "HINT: the gate wants 16 fragments and a mouth.";
-  if(!has("ORIGIN")) return "HINT: every damaged system has a first fault.";
+  if(!has("OBSERVER")) return "HINT: after glass, only the watcher remains. Visit /observer and wait for recognition.";
+  if(!has("BLACKSIGNAL")) return "HINT: inherited transmissions are not carried by radio. Visit /blacksignal and remain with the signal.";
+  if(!has("MOUTH")) return "HINT: fragment 48 tells you what comes next. Visit /vault.";
+  if(!has("GATE")) return "HINT: the gate wants 16 fragments and a mouth. Then visit /gate.";
+  if(!has("ORIGIN")) return "HINT: every damaged system has a first fault. Visit /origin.";
   if(!has("REPAIR")) return "HINT: repair requires 49 fragments.";
   return "HINT: 64 fragments. Then the system will ask the wrong question.";
 }
@@ -566,6 +599,8 @@ function bootSequence(){
         boot.classList.add("hidden");
         app.classList.remove("hidden");
         input.focus();
+        syncDiscoveredKeys();
+        updateHud();
         line("ORION // NODE 0x43B", "corrupt");
         line("Connection established.");
         line("Reality integrity scan incomplete.");
@@ -600,5 +635,6 @@ document.addEventListener("mousemove", e => {
 setInterval(()=>$("clock").textContent = new Date().toLocaleTimeString(),1000);
 form.addEventListener("submit", e => { e.preventDefault(); execute(input.value); input.value = ""; });
 
+save();
 updateHud();
 bootSequence();
